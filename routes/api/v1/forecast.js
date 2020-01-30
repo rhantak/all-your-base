@@ -10,12 +10,11 @@ const bodyParser = require('body-parser');
 
 
 router.get('/', (request, response) => {
-  console.log(request.body);
   database('users').where('api_key', request.body.api_key).select()
     .then(users => {
       if(users.length) {
         fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${request.query.location},co&key=${process.env.GOOGLE_KEY}`)
-        .then((response) => response.json())
+        .then(response => response.json())
         .then(result => {
           response.status(200).json(result.results[0].geometry.location);
         })
