@@ -26,4 +26,21 @@ router.post('/', (request, response) => {
     })
 });
 
+router.delete('/', (request, response) => {
+  database('users').where('api_key', request.body.api_key).select()
+    .then(users => {
+      if(users.length) {
+        let location = request.body.location;
+        let user_id = users[0].id;
+
+        database('favorites').where('location', location).delete()
+          .then(response.status(204).json({"message": `${location} has been removed from your favorites.`}))
+      } else {
+        response.status(401).json({
+          error: "Unauthorized request, API key is missing or incorrect."
+        })
+      }
+    })
+});
+
 module.exports = router;
