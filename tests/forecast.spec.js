@@ -19,7 +19,7 @@ describe('Test the favorite path', () => {
   describe('test favorite GET', () => {
     it('happy path', async () => {
       const res = await request(app)
-        .get("/api/v1/forecast");
+        .get("/api/v1/forecast?location=denver,co");
 
       expect(res.statusCode).toBe(200);
       expect(res.body.length).toBe(1);
