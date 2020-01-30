@@ -7,6 +7,7 @@ const database = require('knex')(configuration);
 const fetch = require("node-fetch");
 const env = require('dotenv').config()
 const bodyParser = require('body-parser');
+const LocationForecast = require ('../../../location_forecast.js')
 
 
 router.get('/', (request, response) => {
@@ -20,7 +21,8 @@ router.get('/', (request, response) => {
         .then(coordinates => {
           fetch(`https://api.darksky.net/forecast/${process.env.DARKSKY_KEY}/${coordinates}`)
           .then(darksky_data => darksky_data.json())
-          .then(result => response.status(200).send(result))
+          .then(location_forecast => new LocationForecast(location_forecast, request.query.location))
+          .then(forecast_object => response.status(200).send(forecast_object))
         })
         .catch((error) => {
           response.status(500).json({ error });
