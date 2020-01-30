@@ -15,8 +15,12 @@ router.get('/', (request, response) => {
       if(users.length) {
         fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${request.query.location},co&key=${process.env.GOOGLE_KEY}`)
         .then(response => response.json())
-        .then(result => {
-          response.status(200).json(result.results[0].geometry.location);
+        .then(result => result.results[0].geometry.location)
+        .then(coordinate_data => `${coordinate_data.lat},${coordinate_data.lng}`)
+        .then(coordinates => {
+          fetch(`https://api.darksky.net/forecast/${process.env.DARKSKY_KEY}/${coordinates}`)
+          .then(darksky_data => darksky_data.json())
+          .then(result => response.status(200).send(result))
         })
         .catch((error) => {
           response.status(500).json({ error });
