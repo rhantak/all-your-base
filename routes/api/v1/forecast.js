@@ -7,17 +7,22 @@ const database = require('knex')(configuration);
 const fetch = require("node-fetch");
 const env = require('dotenv').config()
 const bodyParser = require('body-parser');
+const LocationForecast = require ('../../../location_forecast.js')
 
 
 router.get('/', (request, response) => {
-  console.log(request.body);
   database('users').where('api_key', request.body.api_key).select()
     .then(users => {
       if(users.length) {
         fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${request.query.location},co&key=${process.env.GOOGLE_KEY}`)
-        .then((response) => response.json())
-        .then(result => {
-          response.status(200).json(result.results[0].geometry.location);
+        .then(response => response.json())
+        .then(result => result.results[0].geometry.location)
+        .then(coordinate_data => `${coordinate_data.lat},${coordinate_data.lng}`)
+        .then(coordinates => {
+          fetch(`https://api.darksky.net/forecast/${process.env.DARKSKY_KEY}/${coordinates}`)
+          .then(darksky_data => darksky_data.json())
+          .then(location_forecast => new LocationForecast(location_forecast, request.query.location))
+          .then(forecast_object => response.status(200).send(forecast_object))
         })
         .catch((error) => {
           response.status(500).json({ error });

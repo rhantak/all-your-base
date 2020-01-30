@@ -17,7 +17,7 @@ router.post('/', (request, response) => {
         database('favorites').insert({
           location: location, user_id: user_id
         })
-          .then(response.status(200).json({"message": `${location} has been added to your favorites.`}))
+          .then(response.status(200).send({"message": `${location} has been added to your favorites.`}))
       } else {
         response.status(401).json({
           error: "Unauthorized request, API key is missing or incorrect."
@@ -34,7 +34,7 @@ router.delete('/', (request, response) => {
         let user_id = users[0].id;
 
         database('favorites').where('location', location).delete()
-          .then(response.status(204).json({"message": `${location} has been removed from your favorites.`}))
+          .then(response.status(204).send())
       } else {
         response.status(401).json({
           error: "Unauthorized request, API key is missing or incorrect."
