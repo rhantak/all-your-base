@@ -25,7 +25,7 @@ router.get('/', (request, response) => {
           .then(forecast_object => response.status(200).send(forecast_object))
         })
         .catch((error) => {
-          response.status(500).json({ error });
+          response.status(500).json({ error: error });
         });
       } else {
         response.status(401).json({
