@@ -17,25 +17,28 @@ async function fetchCoordinates(location) {
   return coordinates;
 }
 
+async function fetchWeather(location) {
+  let coordinate_data = await fetchCoordinates(location)
+  let weather_data = await fetch(`https://api.darksky.net/forecast/${process.env.DARKSKY_KEY}/${coordinate_data}`)
+    .then(darksky_data => darksky_data.json())
+  return weather_data;
+}
+
 router.get('/', (request, response) => {
   database('users').where('api_key', request.body.api_key).select()
     .then(users => {
       if(users.length) {
-        let coordinates = fetchCoordinates(request.query.location)
-        .then(coordinates => {
-          fetch(`https://api.darksky.net/forecast/${process.env.DARKSKY_KEY}/${coordinates}`)
-          .then(darksky_data => darksky_data.json())
+        fetchWeather(request.query.location)
           .then(location_forecast => new LocationForecast(location_forecast, request.query.location))
           .then(forecast_object => response.status(200).send(forecast_object))
-        })
-        .catch((error) => {
-          response.status(500).json({ error: error });
-        });
       } else {
         response.status(401).json({
           error: `Unauthorized request, API key is missing or incorrect.`
         })
       }
+    })
+    .catch((error) => {
+      response.status(500).json({ error: error });
     })
 });
 
