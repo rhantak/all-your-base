@@ -27,8 +27,8 @@ async function favoritesWeather(locations) {
   return Promise.all(locations.map(async (location) => {
     let currentWeatherData = await fetchWeather(location)
     return {
-      name: location,
-      currentWeather: new CurrentForecast(currentWeatherData.currently)
+      location: location,
+      current_weather: new CurrentForecast(currentWeatherData.currently)
     }
   }))
 }
