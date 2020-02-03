@@ -9,7 +9,7 @@ const env = require('dotenv').config()
 const CurrentForecast = require('../../../current_forecast')
 
 async function fetchCoordinates(location) {
-  let coordinates = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${location},co&key=${process.env.GOOGLE_KEY}`)
+  let coordinates = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=${process.env.GOOGLE_KEY}`)
     .then(response => response.json())
     .then(result => result.results[0].geometry.location)
     .then(coordinate_data => `${coordinate_data.lat},${coordinate_data.lng}`)
