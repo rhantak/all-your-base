@@ -76,6 +76,8 @@ Body:
 
 ## Schema Design
 
+<img width="444" alt="Screen Shot 2020-02-03 at 8 06 20 AM" src="https://user-images.githubusercontent.com/47759923/73664716-1bc4b300-465d-11ea-9b78-40766bbe65b5.png">
+
 ## Tech Stack
 
 This application is built in Node.js using Express as a framework and Knex as an ORM. PostegreSQL is used for the database, and the finished app is deployed through Heroku.
