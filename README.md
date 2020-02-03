@@ -1,72 +1,87 @@
 # Express Sweater Weather
 
-## Getting started
-To use this repo, you’ll need to `fork` the repo as your own. Once you have done that, you’ll need to run the following command below to get everything up and running. 
+## Introduction
+Express Sweater Weather is a basic CRUD API for weather data in cities. Users can search for weather at a certain location, as well as add/remove favorited locations and see a list of current weather in all of their favorite locations.
 
-#### Installing necessary dependencies
-The easiest way to get started is to run the following command. This will pull down any necessary dependencies that your app will require. You can think of this command as something incredibly similar to `bundle install` in Rails. 
+## Initial Setup
+This application is hosted on Heroku [here](https://sheltered-dusk-71552.herokuapp.com/).
 
-`npm install`
-
-#### Set up your local database
-You’ll need to figure out a name for your database. We suggest calling it something like `sweater_weather_dev`.  
-
-To get things set up, you’ll need to access your Postgres instance by typing in `psql` into your terminal. Once there, you can create your database by running the comment `CREATE DATABASE PUT_DATABASE_NAME_HERE_dev;`. 
-
-Now you have a database for your new project.
-
-#### Migrations
-Once you have your database setup, you’ll need to run some migrations (if you have any). You can do this by running the following command: 
-
-`knex migrate:latest`
-
-
-Instructions to create database, run migrations, and seed: 
+For local setup, please use NPM to manage dependencies. After cloning down the repository, run the command `npm install`. After this is complete, you will need to set up a development database using PostegreSQL, which can be done with the following commands:
 ```
 psql
-CREATE DATABASE DATABASE_NAME_dev;
-\q
+CREATE DATABASE express_sweater_weather_dev;
+```
+After the database is created, run `knex migrate:latest` to set up the necessary tables and `knex seed:run` to create a default user using seeds.
 
-knex migrate:latest
-knex seed:run
+## How To Use
+All request URLs will begin with `https://sheltered-dusk-71552.herokuapp.com/api/v1`. Users must have a key to use this API, which must be sent in the body of all requests.
+
+#### GET `/forecast?location=<location>`
+This endpoint will send a list of weather information for the given city. Data includes current weather, hourly weather for the next 8 hours, and daily weather for the next 7 days.
+
+Example request:
+```
+GET https://sheltered-dusk-71552.herokuapp.com/api/v1/forecast?location=denver,co
+```
+Body:
+```
+{
+  "api_key": "examplekey
+}
 ```
 
-#### Set up your test database
-Most of the setup is going to be same as the one you did before. You’ll notice one small difference with setting the environment flag to `test`.  
+#### POST `/favorites`
+This endpoint will add a location to the user's favorites. The body of the request will require a parameter of `"location"` in addition to the user's api key. Successful requests will send a message: `"<location> has been added to your favorites."`. Locations may only be favorited one time per user.
 
+Example request:
 ```
-psql
-CREATE DATABASE DATABASE_NAME_test;
-\q
-
-knex migrate:latest --env test
+POST https://sheltered-dusk-71552.herokuapp.com/api/v1/favorites
 ```
-
-## Running your tests
-Running tests are simple and require you to run the following command below: 
-
-`npm test`
-
-When the tests have completed, you’ll get a read out of how things panned out. The tests will be a bit more noisy than what you’re used to, so be prepared. 
-
-## Setting up your production environment
-This repo comes with a lot of things prepared for you. This includes production ready configuration. To get started, you’ll need to do a few things. 
-
-- Start a brand new app on the Heroku dashboard 
-- Add a Postgres instance to your new Heroku app
-- Find the URL of that same Postgres instance and copy it. It should look like a long url. It may look something like like `postgres://sdflkjsdflksdf:9d3367042c8739f3...`.
-- Update your `knexfile.js` file to use your Heroku database instance. You’ll see a key of `connection` with a value of an empty string. This is where you’ll paste your new Postgres instance URL. 
-
-Once you’ve set all of that up, you’ll need to `add the remote` to your new app. This should work no differently than how you’ve done it with any Rails project. Adding this remote will allow you to run `git push heroku master`. 
-
-Once you’ve done that, you’ll need to `bash` into your Heroku instance and get some things set up. 
-
-- Run the following commands to get started:
+Body:
 ```
-heroku run bash
-npm install
-nom install -g knex
-knex migrate:latest
+{
+  "api_key": "examplekey,
+  "location": "denver,co"
+}
 ```
 
-This will install any dependencies, install Knex, and migrate any changes that you’ve made to the database. 
+#### DELETE `/favorites`
+This endpoint will remove a location from a user's favorites. The body of the request will require a parameter of `"location"` in addition to the user's api key. Successful requests will send a response with a status of 204.
+
+Example request:
+```
+DELETE https://sheltered-dusk-71552.herokuapp.com/api/v1/favorites
+```
+Body:
+```
+{
+  "api_key": "examplekey,
+  "location": "denver,co"
+}
+```
+
+#### GET `/favorites`
+This endpoint will send a list of the user's favorites, along with their current weather data.
+
+Example request:
+```
+GET https://sheltered-dusk-71552.herokuapp.com/api/v1/favorites
+```
+Body:
+```
+{
+  "api_key": "examplekey
+}
+```
+
+## Schema Design
+
+## Tech Stack
+
+This application is built in Node.js using Express as a framework and Knex as an ORM. PostegreSQL is used for the database, and the finished app is deployed through Heroku.
+
+## Core Contributors
+
+This application was developed as a solo project by [myself](https://github.com/rhantak), with input from [John Travers](https://github.com/johnktravers) in the form of PR review.
+
+You can find my agile board on GitHub Projects [here](https://github.com/rhantak/express-sweater-weather/projects/1).
