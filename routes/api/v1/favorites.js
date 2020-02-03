@@ -49,16 +49,26 @@ router.get('/', (request, response) => {
 })
 
 router.post('/', (request, response) => {
+  let location = request.body.location
+
   database('users').where('api_key', request.body.api_key).select()
     .then(users => {
       if(users.length) {
-        let location = request.body.location
         let user_id = users[0].id
 
-        database('favorites').insert({
-          location: location, user_id: user_id
-        })
-          .then(response.status(200).send({"message": `${location} has been added to your favorites.`}))
+        database('favorites').where({'user_id': user_id, 'location': location}).select()
+          .then(faves => {
+            if (!faves.length) {
+              database('favorites').insert({
+                location: location, user_id: user_id
+              })
+              .then(response.status(200).send({"message": `${location} has been added to your favorites.`}))
+            } else {
+              response.status(403).json({
+                error: 'That location is already favorited.'
+              })
+            }
+          })
       } else {
         response.status(401).json({
           error: "Unauthorized request, API key is missing or incorrect."
