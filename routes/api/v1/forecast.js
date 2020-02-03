@@ -14,6 +14,9 @@ async function fetchCoordinates(location) {
     .then(response => response.json())
     .then(result => result.results[0].geometry.location)
     .then(coordinate_data => `${coordinate_data.lat},${coordinate_data.lng}`)
+    .catch((error) => {
+      response.status(500).json({ error: error})
+    })
   return coordinates;
 }
 
@@ -21,6 +24,9 @@ async function fetchWeather(location) {
   let coordinate_data = await fetchCoordinates(location)
   let weather_data = await fetch(`https://api.darksky.net/forecast/${process.env.DARKSKY_KEY}/${coordinate_data}`)
     .then(darksky_data => darksky_data.json())
+    .catch((error) => {
+      response.status(500).json({ error: error })
+    })
   return weather_data;
 }
 
