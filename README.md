@@ -1,6 +1,4 @@
-# All your Express base are belong to us
-
-[![Build Status](https://travis-ci.com/turingschool-examples/all-your-base.svg?branch=master)](https://travis-ci.com/turingschool-examples/all-your-base)
+# Express Sweater Weather
 
 ## Getting started
 To use this repo, you’ll need to `fork` the repo as your own. Once you have done that, you’ll need to run the following command below to get everything up and running. 
