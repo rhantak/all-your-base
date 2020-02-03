@@ -25,9 +25,9 @@ async function fetchWeather(location) {
 
 async function favoritesWeather(locations) {
   return Promise.all(locations.map(async (location) => {
-    let currentWeatherData = await fetchWeather(location)
+    let currentWeatherData = await fetchWeather(location.location)
     return {
-      location: location,
+      location: location.location,
       current_weather: new CurrentForecast(currentWeatherData.currently)
     }
   }))
@@ -37,7 +37,7 @@ router.get('/', (request, response) => {
   database('users').where('api_key', request.body.api_key).select()
     .then(users => {
       if (users.length) {
-        database('favorites').where('user_id', users[0].id).select('location')
+        database('favorites').where('user_id', users[0].id).select()
           .then(locations => favoritesWeather(locations))
           .then(data => response.status(200).send(data))
       } else {
